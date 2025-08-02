@@ -10,7 +10,7 @@ namespace LogiTrack.Entities
         public DateTime DatePlaced { get; set; }
 
         // Navigation property.
-        public List<InventoryItem> Items { get; set; } = [];
+        public List<InventoryItem> Items { get; } = [];
 
 
         // Methods.
