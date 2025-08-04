@@ -1,5 +1,6 @@
 using LogiTrack.Data;
 using LogiTrack.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace LogiTrack.Controllers
 
 
         // GET: "/api/inventory"
+        [Authorize(Policy = "UserPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
@@ -24,6 +26,7 @@ namespace LogiTrack.Controllers
 
 
         // GET: "/api/inventory/{id}"
+        [Authorize(Policy = "UserPolicy")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetItemById(int id)
         {
@@ -39,6 +42,7 @@ namespace LogiTrack.Controllers
 
 
         // POST: "/api/inventory"
+        [Authorize(Policy = "EditorPolicy")]
         [HttpPost]
         public async Task<IActionResult> CreateItem(InventoryItem itemInput)
         {
@@ -50,6 +54,7 @@ namespace LogiTrack.Controllers
 
 
         // DELETE: "/api/inventory/{id}"
+        [Authorize(Policy = "EditorPolicy")]
         [HttpDelete]
         public async Task<IActionResult> DeleteItem(int id)
         {

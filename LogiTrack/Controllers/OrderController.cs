@@ -4,6 +4,7 @@ using LogiTrack.Dto;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LogiTrack.Controllers
 {
@@ -16,6 +17,7 @@ namespace LogiTrack.Controllers
 
 
         // GET: "api/orders"
+        [Authorize(Policy = "EditorPolicy")]
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
@@ -25,6 +27,7 @@ namespace LogiTrack.Controllers
 
 
         // GET: "api/orders/{id}"
+        [Authorize(Policy = "EditorPolicy")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetOrderById(int id)
         {
@@ -44,6 +47,7 @@ namespace LogiTrack.Controllers
 
 
         // POST: "api/orders/"
+        [Authorize(Policy = "UserPolicy")]
         [HttpPost]
         public async Task<IActionResult> CreateOrder(AddOrderDTO newOrder)
         {
@@ -69,6 +73,7 @@ namespace LogiTrack.Controllers
 
 
         // DELETE: "api/orders/{id}"
+        [Authorize(Policy = "EditorPolicy")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
