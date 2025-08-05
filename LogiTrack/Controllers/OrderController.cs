@@ -13,7 +13,20 @@ namespace LogiTrack.Controllers
     public class OrderController : ControllerBase
     {
         private readonly LogiTrackContext _context;
-        public OrderController(LogiTrackContext Context) => _context = Context;
+        private readonly IMemoryCache _cache;
+        public OrderController(LogiTrackContext Context, IMemoryCache Cache)
+        {
+            _context = Context;
+            _cache = Cache;
+
+            // Load all inventory items into cache.
+            _cache.Set("ItemList", _context.Orders.ToList(),
+                new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    Size = 5
+                });
+        }
 
 
         // GET: "api/orders"
@@ -21,7 +34,19 @@ namespace LogiTrack.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders()
         {
-            var orders = await _context.Orders.ToListAsync();
+            // Try accessing the cache.
+            if (!_cache.TryGetValue("ItemList", out List<Orders>? items))
+            {
+                // Retrieve items from database, and set the cache.
+                items = await _context.Orders.ToListAsync();
+
+                _cache.Set("ItemList", _context.Orders.ToList(),
+                new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    Size = 5
+                });
+        
             return Ok(orders);
         }
 
