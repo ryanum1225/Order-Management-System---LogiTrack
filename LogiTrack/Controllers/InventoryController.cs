@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace LogiTrack.Controllers
 {
@@ -12,7 +13,12 @@ namespace LogiTrack.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly LogiTrackContext _context;
-        public InventoryController(LogiTrackContext Context) => _context = Context;
+        private readonly IMemoryCache _cache;
+        public InventoryController(LogiTrackContext Context, IMemoryCache Cache)
+        {
+            _context = Context;
+            _cache = Cache;
+        }
 
 
         // GET: "/api/inventory"
@@ -20,7 +26,20 @@ namespace LogiTrack.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllItems()
         {
-            var items = await _context.InventoryItems.ToListAsync();
+            // Try accessing the cache.
+            if (!_cache.TryGetValue("ItemList", out List<InventoryItem>? items))
+            {
+                // Retrieve items from database, and set the cache.
+                items = await _context.InventoryItems.ToListAsync();
+
+                _cache.Set("ItemList", _context.InventoryItems.ToList(),
+                new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30)
+                });
+
+            }
+
             return Ok(items);
         }
 

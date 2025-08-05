@@ -11,6 +11,8 @@ var key = "b6785d24551f467312cc552a99df67177e3c7e7d";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddMemoryCache();
+
 
 builder.Services.AddDbContext<LogiTrackContext>();
 
