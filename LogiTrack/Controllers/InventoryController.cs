@@ -18,6 +18,15 @@ namespace LogiTrack.Controllers
         {
             _context = Context;
             _cache = Cache;
+
+            // Load all inventory items into cache.
+            _cache.Set("ItemList", _context.InventoryItems.ToList(),
+                new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    Size = 5
+                });
+
         }
 
 
@@ -35,7 +44,8 @@ namespace LogiTrack.Controllers
                 _cache.Set("ItemList", _context.InventoryItems.ToList(),
                 new MemoryCacheEntryOptions
                 {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(30)
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
+                    Size = 5
                 });
 
             }
